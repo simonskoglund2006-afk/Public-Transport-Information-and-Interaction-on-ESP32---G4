@@ -1,0 +1,4 @@
+booking_rule_id,booking_type,prior_notice_duration_min,prior_notice_last_day,prior_notice_last_time,message,phone_number
+100000000000000001,2,,1,04:00:00,Turen är anropsstyrd och körs endast efter förbeställning med Taxi/minibuss. Turen beställs på tfn 0455-16500 senast kl 20.00 dagen innan resdagen. Avgår från hållplatsläge D på Karlskrona centralstation och hållplatsläge B på Bergåsa stn.,
+100000000000000002,2,,1,04:00:00,Turen är anropsstyrd och körs endast efter förbeställning med Taxi/minibuss. Turen beställs på tfn 0455-16500 senast kl 18.00.,
+100000000000000003,2,,1,04:00:00,Turen är anropsstyrd och körs endast efter förbeställning med Taxi/minibuss. Turen beställs på tfn 0455-16500 senast kl 18.00.,
