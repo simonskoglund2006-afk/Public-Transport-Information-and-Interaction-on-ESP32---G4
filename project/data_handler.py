@@ -7,7 +7,7 @@ class Datahandler:
         self.data = None
 
     def load_data(self, id):
-        dp = self.jsn.loads(self.requests.get(f'https://realtime-api.trafiklab.se/v1/departures/73602?key=87f27410146c46db9278c92ee7b0ea28').text)
+        dp = self.jsn.loads(self.requests.get(f'https://realtime-api.trafiklab.se/v1/departures/{id}?key=87f27410146c46db9278c92ee7b0ea28').text)
         df = self.pnd.json_normalize(dp["departures"])
         return df
 
