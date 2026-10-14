@@ -1,37 +1,33 @@
 
+import pandas as pd
 class DataMaxer:
-    import numpy as np
-    import json as js
-    import pandas as pd
 
     def __init__(self):
-        self.df = self.pd.read_csv("stops.csv")
+        self.df = pd.read_csv("stops.csv",encoding="utf-8")
 
     def filter(self):
-        karlsrkona = self.pd.DataFrame(columns=list(self.df.columns))
+        karlsrkrona = [] #lista att lägga filterade resultat
         
-        for lat,lon in self.df.loc[["stop_lat", "stop_lon"]]:
-            result = self.is_in(lat, lon)
-            if result == True:
-                karlsrkrona
+        for index, stop in self.df.iterrows():  #itererar över alla stop inlaggda i dataset
+            result = self.is_in(stop["stop_lat"], stop["stop_lon"]) ##kallar is in funktionens
+            if result == True: 
+                karlsrkrona.append(stop)
 
+        return pd.DataFrame(karlsrkrona, columns=list(self.df.columns)) #retunerar en ny dataframe med filtrerade resultat med samma columner som orginalet
 
     def is_in(self, lat, lon):
         set_a = (lon<16.09)&(lat>56)&(lat<56.528)&(lat<(0.742804*lon + 44.67389))
         set_b = (lat < (-0.850135*lon+69.33733))&(lat<(0.547745*lon+48.02817))&(lon<16.09)&(lat<56.528)&(lat>56) 
+        # Gör 2 sets som innehåller området
 
-        if set_a|set_b:
+        if set_a|set_b: #Kollar om det finns i någon av områdena
             return True
         else:
-            return False        
-        
+            return False
 
+def main():
+    dtamax = DataMaxer()
+    goon = dtamax.filter()
+    goon.to_csv("stop_karlskrona.csv", encoding="utf-8")
 
-#x_data = get_lat("sigma")
-
-#x < 16.09
-#y > -0.850135*x + 69.33733
-#set_a = {y>56, y<56.528, y<0.742804*x+44.67389}
-#set_b = {y<0.547745*x+48.02817, x<16.09, y<56.528, y>56}
-
-print(df.to_string())
+main()
