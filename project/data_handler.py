@@ -39,7 +39,6 @@ class Datahandler:
 
 def main():
     datahandler = Datahandler()
-    #datahandler.departures(input("vart åker du ifrån? "))
-    datahandler.departures("Karlskrona Centralstation")
+    datahandler.departures(input("vart åker du ifrån? "))
 
 main()
