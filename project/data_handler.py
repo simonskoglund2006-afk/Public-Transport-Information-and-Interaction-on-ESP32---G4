@@ -18,8 +18,7 @@ class Datahandler:
                 get_id = self.jsn.loads(self.requests.get(f"https://realtime-api.trafiklab.se/v1/stops/name/{stop}/?key=87f27410146c46db9278c92ee7b0ea28").text)
                 id = get_id["stop_groups"][0]["id"]
                 return id
-            else:
-                return None
+        return None
     
     def print_data(self):
         print(self.data.to_string())
