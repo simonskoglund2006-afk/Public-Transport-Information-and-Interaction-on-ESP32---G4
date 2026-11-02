@@ -1,19 +1,18 @@
 class Departure_fetcher:
     '''This class contains fuctions used to fetch departure data from trafiklabb for a specific stop'''
-    import pandas as pnd
     import json as jsn
     import requests
 
     def __init__(self):
-        self.data = self.pnd.read_csv("stop_karlskrona.csv", encoding="utf-8")
+        with open("stops_karlsrkona.json", encoding="utf-8") as f:
+            self.data = self.jsn.loads(f)
 
     def load_data(self, id):
         '''This function takes an id that it uses to fetch stop data from the trafiklabb stop lookup api'''
         dp = self.jsn.loads(self.requests.get(f'https://realtime-api.trafiklab.se/v1/departures/{id}?key=87f27410146c46db9278c92ee7b0ea28').text)
-        df = self.pnd.json_normalize(dp["departures"])
-        return df
+        return dp
 
-    def search_stop_id(self, stop:str):
+    def search_stop_id(self, stop:str): # Omformaattera till json shit
         '''Function that takes a string which it uses to search for a stop with a matching name in the stop_karlskrona.csv dataset'''
         for index, stops in self.data.iterrows(): #Loops through the rows in the stop_karlskrona.csv dataset
             if stop.lower() == stops["stop_name"].lower(): #Checks if provided string matches stop name
@@ -22,12 +21,12 @@ class Departure_fetcher:
                 return id
         return None
     
-    def print_data(self):
+    def print_data(self): # omformatera till json shit
         '''Prints data in stop_karlskrona.csv'''
         print(self.data.to_string())
         return
 
-    def departures(self, origin:str):
+    def departures(self, origin:str): # omformatera till json shit
         '''This function forwards an id provided by the search_stop_id fuction to the load_data function in order to fetch departure data for a specific stop. Takes a string that gets forwarded to the search_stop_id fuction.'''
         id = self.search_stop_id(origin)
         if id is None:
