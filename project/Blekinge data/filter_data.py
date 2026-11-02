@@ -28,6 +28,6 @@ class DataMaxer:
 def main():
     dtamax = DataMaxer()
     goon = dtamax.filter()
-    goon.to_csv("stop_karlskrona.csv", encoding="utf-8")
+    goon.to_json(path_or_buf="Karlsrkona.json", orient="index")
 
 main()
