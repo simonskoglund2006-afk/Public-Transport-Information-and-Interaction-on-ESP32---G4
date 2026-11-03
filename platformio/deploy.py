@@ -45,6 +45,11 @@ PROJECT_EXCLUDES = {
     ".DS_Store",
     "Thumbs.db",
     "Desktop.ini",
+    # PC-side data and tools: too big for the board / need pandas & requests
+    "Blekinge data",
+    "alla_station_sviden.json",
+    "stop_karlskrona.csv",
+    "departure_fetcher.py",
 }
 
 
