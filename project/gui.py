@@ -1,4 +1,5 @@
 import lvgl as lv
+<<<<<<< HEAD
 import settings
 
 class GUI:
@@ -13,6 +14,19 @@ class GUI:
         self.second_screen()
         self.third_screen()
         
+=======
+
+
+class GUI:
+    'Builds and handles all screens on the display'
+
+    def __init__(self, departures):
+        self.departures = departures
+        self.tile2_dark = False
+        self.first_screen()
+        self.second_screen()
+
+>>>>>>> 0f40474 (created a new file and added my code there instead of main)
     @staticmethod
     def apply_tile_colors(tile, label, dark):
         tile.set_style_bg_opa(lv.OPA.COVER, 0)
@@ -27,6 +41,7 @@ class GUI:
         self.tile2_dark = not self.tile2_dark
         self.apply_tile_colors(self.tile2, self.board_title, self.tile2_dark)
 
+<<<<<<< HEAD
     @staticmethod
     def make_label(parent, text, y_offset):
         'Creates a centered black text label'
@@ -37,6 +52,46 @@ class GUI:
         label.align(lv.ALIGN.TOP_MID, 0, y_offset)
 
         return label
+=======
+    def first_screen(self):
+        'First screen'
+        self.tileview = lv.tileview(lv.screen_active())
+        self.tileview.set_size(600, 450)
+        self.tileview.set_scrollbar_mode(lv.SCROLLBAR_MODE.OFF)
+        self.tileview.set_style_bg_color(lv.color_hex(0xFFFFFF), 0)
+        self.tileview.set_style_bg_opa(lv.OPA.COVER, 0)
+
+        self.tile1 = self.tileview.add_tile(0, 0, lv.DIR.RIGHT)
+        self.tile2 = self.tileview.add_tile(1, 0, lv.DIR.LEFT)
+        self.tile3 = self.tileview.add_tile(2, 0, lv.DIR.LEFT)
+
+        self.title_label = lv.label(self.tile1)
+        self.title_label.set_text("Public Transport Information")
+        self.title_label.set_style_text_font(lv.font_montserrat_28, 0)
+        self.title_label.align(lv.ALIGN.TOP_MID, 0, 20)
+        self.title_label.set_style_text_color(lv.color_hex(0x000000), 0)
+
+        self.version_label = lv.label(self.tile1)
+        self.version_label.set_text("V2")
+        self.version_label.set_style_text_font(lv.font_montserrat_28, 0)
+        self.version_label.align(lv.ALIGN.TOP_MID, 0, 70)
+        self.version_label.set_style_text_color(lv.color_hex(0x000000), 0)
+
+        self.group_label = lv.label(self.tile1)
+        self.group_label.set_text("Group 4")
+        self.group_label.set_style_text_font(lv.font_montserrat_28, 0)
+        self.group_label.align(lv.ALIGN.TOP_MID, 0, 110)
+        self.group_label.set_style_text_color(lv.color_hex(0x000000), 0)
+
+        self.names_label = lv.label(self.tile1)
+        self.names_label.set_text("Albin Persson\nDaniel Ojog\nFelix Rudiger\nLucas Jonsson\nSimon Skoglund")         #Unfortunally I can not find a way to write åäö :(
+        self.names_label.set_style_text_font(lv.font_montserrat_28, 0)
+        self.names_label.align(lv.ALIGN.TOP_MID, 0, 150)
+        self.names_label.set_style_text_color(lv.color_hex(0x000000), 0)
+
+        self.tile1.set_style_bg_color(lv.color_hex(0xFFFFFF), 0)
+        self.tile1.set_style_bg_opa(lv.OPA.COVER, 0)
+>>>>>>> 0f40474 (created a new file and added my code there instead of main)
 
     @staticmethod
     def make_divider(parent, y_offset, width=560):
@@ -58,6 +113,7 @@ class GUI:
         cell.set_style_text_font(lv.font_montserrat_28, 0)
         cell.set_style_text_color(lv.color_hex(color), 0)
         cell.align(lv.ALIGN.TOP_LEFT, x, y)
+<<<<<<< HEAD
         self.row_cells.append(cell)
 
     def add_setting_icon(self):
@@ -159,6 +215,8 @@ class GUI:
 
         self.tile1.set_style_bg_color(lv.color_hex(0xFFFFFF), 0)
         self.tile1.set_style_bg_opa(lv.OPA.COVER, 0)
+=======
+>>>>>>> 0f40474 (created a new file and added my code there instead of main)
 
     def second_screen(self):
         'Departure screen'
@@ -188,6 +246,7 @@ class GUI:
 
         self.make_divider(self.tile2, 395)
         self.add_cell('Data from Trafiklab.se', 20, 406)
+<<<<<<< HEAD
         self.add_setting_icon()
 
     def third_screen(self):
@@ -197,3 +256,28 @@ class GUI:
         self.selecting_stops()
         self.save_button()
     
+=======
+
+        self.add_setting_icon()
+
+    def add_setting_icon(self):
+        'adding a setting icon'
+        self.settings_btn = lv.button(self.tile2)
+        self.settings_btn.set_size(50, 50)
+        self.settings_btn.align(lv.ALIGN.TOP_RIGHT, -10, 5)
+        self.settings_btn.add_event_cb(self.on_settings_clicked, lv.EVENT.CLICKED, None)
+
+        gear = lv.label(self.settings_btn)
+        gear.set_text(lv.SYMBOL.SETTINGS)
+        gear.set_style_text_font(lv.font_montserrat_28, 0)
+        gear.center()
+
+        gear.update_layout()
+        gear.set_style_transform_pivot_x(gear.get_width() // 2, 0)
+        gear.set_style_transform_pivot_y(gear.get_height() // 2, 0)
+        gear.set_style_transform_scale(384, 0)
+
+    def on_settings_clicked(self, _event):
+        'Slides to the settings screen'
+        self.tileview.set_tile(self.tile3, True)
+>>>>>>> 0f40474 (created a new file and added my code there instead of main)

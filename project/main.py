@@ -3,11 +3,14 @@ import time
 import json as jsn
 import requests
 
-import lvgl as lv
 import network
 from board_lvgl import start_board
 from debug_log import log
+<<<<<<< HEAD
 from departure_fetcher import Departure_fetcher
+=======
+from gui import GUI
+>>>>>>> 0f40474 (created a new file and added my code there instead of main)
 
 from gui import GUI
 from secrets import WIFI_SSID, WIFI_PASSWORD
@@ -47,7 +50,11 @@ DEPARTURES_BY_STOP = {
 class Application:
     def __init__(self):
         self.display, self.touch, self.handler = start_board()
+<<<<<<< HEAD
         self.gui = GUI(DEPARTURES, STOPS, TRANSPORT_TYPES)
+=======
+        self.gui = GUI(DEPARTURES)
+>>>>>>> 0f40474 (created a new file and added my code there instead of main)
         self.connect_wifi()
         log("student application ready")
 
