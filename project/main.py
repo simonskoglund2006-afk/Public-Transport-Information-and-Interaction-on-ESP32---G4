@@ -1,8 +1,11 @@
 import sys
 import time
+<<<<<<< HEAD
 import json as jsn
 import requests
 
+=======
+>>>>>>> 88a04e0 (Added settings screen (it is still in progress), added a save button and now you can select some stops as a demo, also created a new file)
 import network
 from board_lvgl import start_board
 from debug_log import log
@@ -10,9 +13,12 @@ from debug_log import log
 from departure_fetcher import Departure_fetcher
 =======
 from gui import GUI
+<<<<<<< HEAD
 >>>>>>> 0f40474 (created a new file and added my code there instead of main)
 
 from gui import GUI
+=======
+>>>>>>> 88a04e0 (Added settings screen (it is still in progress), added a save button and now you can select some stops as a demo, also created a new file)
 from secrets import WIFI_SSID, WIFI_PASSWORD
 
 # Placeholder data for now until I get the real data
@@ -51,10 +57,14 @@ class Application:
     def __init__(self):
         self.display, self.touch, self.handler = start_board()
 <<<<<<< HEAD
+<<<<<<< HEAD
         self.gui = GUI(DEPARTURES, STOPS, TRANSPORT_TYPES)
 =======
         self.gui = GUI(DEPARTURES)
 >>>>>>> 0f40474 (created a new file and added my code there instead of main)
+=======
+        self.gui = GUI(DEPARTURES, STOPS, TRANSPORT_TYPES)
+>>>>>>> 88a04e0 (Added settings screen (it is still in progress), added a save button and now you can select some stops as a demo, also created a new file)
         self.connect_wifi()
         log("student application ready")
 
