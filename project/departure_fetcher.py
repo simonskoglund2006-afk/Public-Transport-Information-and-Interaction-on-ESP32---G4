@@ -6,6 +6,7 @@ class Departure_fetcher:
     def __init__(self):
         with open("stops_karlskrona.json", encoding="utf-8") as f:
             self.data = self.jsn.load(f)
+            f.close()
 
     def load_data(self, id):
         '''This function takes an id that it uses to fetch stop data from the trafiklabb stop lookup api'''
@@ -15,8 +16,8 @@ class Departure_fetcher:
     def search_stop_id(self, stop:str): # Omformaattera till json shit
         '''Function that takes a string which it uses to search for a stop with a matching name in the stop_karlskrona.csv dataset'''
         for index in self.data:
-                for stops in self.data["stops"]:  #Loops through the rows in the stop_karlskrona.csv dataset
-                    if stop.lower() == stops["name"].lower(): #Checks if provided string matches stop name
+                for stops in self.data["stop_name"]:  #Loops through the rows in the stop_karlskrona.csv dataset
+                    if stop.lower() == stops.lower(): #Checks if provided string matches stop name
                         get_id = self.jsn.loads(self.requests.get(f"https://realtime-api.trafiklab.se/v1/stops/name/{stop}/?key=87f27410146c46db9278c92ee7b0ea28").text)
                         id = get_id["stop_groups"][0]["id"] #extracts stop id. (This can be modified to display multiple stops with a similar name to the provided string if needed)
                         return id
