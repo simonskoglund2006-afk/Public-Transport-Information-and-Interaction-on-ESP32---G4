@@ -1,28 +1,47 @@
 import sys
 import time
-
 import network
-
 from board_lvgl import start_board
 from debug_log import log
 from gui import GUI
-
 from secrets import WIFI_SSID, WIFI_PASSWORD
 
-
+# Placeholder data for now until I get the real data
 DEPARTURES = [
-    ('12:05', '3', 'Bastasjo', 'On time'),                         # Placeholder data for now until I get the real data                                                      # (time, line, destination, status)
+    ('12:05', '3', 'Bastasjo', 'On time'),                                                                               
     ('12:10', '1', 'Lyckeby', 'On time'),
     ('12:14', '5', 'Nattraby', 'Delayed'),
     ('12:20', '1', 'Salto', 'On time'),
     ('12:25', '3', 'Centrum', 'On time'),
 ]
 
+# Stops shown in the settings list, backend will replace these later
+STOPS = [
+    "Campus Grasvik",
+    "Karlskrona Centralstation",
+    "Ronneby",
+    "Lyckeby",
+    "Nattraby",
+]
+TRANSPORT_TYPES = ("All", "Bus", "Train", "Ferry")
+
+# Just for testing at the moment
+DEPARTURES_BY_STOP = {
+    "Campus Grasvik": [
+        ("12:45", "1", "Karlskrona C", "On time"),
+        ("12:52", "7", "Lyckeby", "Delayed"),
+    ],
+    "Karlskrona Centralstation": [
+        ("12:48", "1", "Campus Grasvik", "On time"),
+        ("13:05", "4", "Ronneby", "On time"),
+        ("13:10", "2", "Lyckeby", "Cancelled"),
+    ],
+}
 
 class Application:
     def __init__(self):
         self.display, self.touch, self.handler = start_board()
-        self.gui = GUI(DEPARTURES)
+        self.gui = GUI(DEPARTURES, STOPS, TRANSPORT_TYPES)
         self.connect_wifi()
         log("student application ready")
 
@@ -39,7 +58,6 @@ class Application:
             time.sleep_ms(250)
         log("Wi-Fi connected" if station.isconnected()
             else "Wi-Fi could not connect (timeout)")
-
 
 try:
     app = Application()
