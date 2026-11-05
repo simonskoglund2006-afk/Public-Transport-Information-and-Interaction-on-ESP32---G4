@@ -5,7 +5,7 @@
       "partitions": "default_16MB.csv",
       "memory_type": "qio_opi"
     },
-    "core": "esp32",
+    "core": "esp32s3",
     "extra_flags": [
       "-DLILYGO_TDISPLAY_AMOLED_SERIES",
       "-DARDUINO_USB_MODE=1",
