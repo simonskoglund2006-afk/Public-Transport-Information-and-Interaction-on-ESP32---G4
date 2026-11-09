@@ -15,7 +15,6 @@ class Departure_fetcher:
     
     def print_data(self, texte): # omformatera till json shit
         '''Prints data in stop_karlskrona.csv'''
-        #print(self.departures(texte))
         print(self.data)
         return
 
@@ -31,10 +30,3 @@ class Departure_fetcher:
                     transport = inde["route"]["transport_mode"]
                     relevant_departure_data.append({"route_direction" : direction, "departure_time" : time, "transport_mode" : transport})
         return relevant_departure_data # returns relevant departure data
-
-
-def main():
-    datahandler = Departure_fetcher()
-    datahandler.print_data(input("vart åker du ifrån? "))
-
-main()
