@@ -1,12 +1,8 @@
 class Departure_fetcher:
     '''This class contains fuctions used to fetch departure data from trafiklabb for a specific stop'''
-    import json as jsn
-    import requests
-
     def __init__(self):
         with open("Karlskrona.json", encoding="utf-8") as f:
             self.data = self.jsn.load(f)
-            f.close()
 
     def load_data(self, id):
         '''This function takes an id that it uses to fetch stop data from the trafiklabb stop lookup api'''
@@ -29,4 +25,5 @@ class Departure_fetcher:
                     time = inde["realtime"]
                     transport = inde["route"]["transport_mode"]
                     relevant_departure_data.append({"route_direction" : direction, "departure_time" : time, "transport_mode" : transport})
-        return relevant_departure_data # returns relevant departure data
+                return relevant_departure_data # returns relevant departure data
+        return None

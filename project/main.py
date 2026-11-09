@@ -1,11 +1,14 @@
 import sys
 import time
+import json as jsn
+import requests
 
 import lvgl as lv
 import network
 
 from board_lvgl import start_board
 from debug_log import log
+from departure_fetcher import Departure_fetcher
 
 from secrets import WIFI_SSID, WIFI_PASSWORD
 
