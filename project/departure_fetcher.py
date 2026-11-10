@@ -1,5 +1,5 @@
 class Departure_fetcher:
-    '''This class contains fuctions used to fetch departure data from trafiklabb for a specific stop'''
+    '''This class contains fuctions used to fetch departure data from trafiklabb for a specific stop within karlskrona kommun'''
     def __init__(self):
         with open("Karlskrona.json", encoding="utf-8") as f:
             self.data = self.jsn.load(f)
@@ -9,21 +9,23 @@ class Departure_fetcher:
         dp = self.jsn.loads(self.requests.get(f'https://realtime-api.trafiklab.se/v1/departures/{id}?key=87f27410146c46db9278c92ee7b0ea28').text)
         return dp
     
-    def print_data(self, texte): # omformatera till json shit
-        '''Prints data in stop_karlskrona.csv'''
+    def print_data(self, texte): 
+        '''Prints data in Karlskrona.json'''
         print(self.data)
         return
 
-    def departures(self, origin:str): # omformatera till json shit
-        '''This function forwards an id provided by the search_stop_id fuction to the load_data function in order to fetch departure data for a specific stop. Takes a string that gets forwarded to the search_stop_id fuction.'''
+    def departures(self, origin:str): 
+        '''This function forwards an id provided by the search_stop_id fuction to the load_data function in order to fetch departure data for a specific stop. Takes a string that gets forwarded to the search_stop_id fuction. Update'''
         relevant_departure_data = []
         for index in self.data.values():
             if index["stop_name"].lower() == origin.lower():
                 departure_data = self.load_data(index["stop_id"])
                 for inde in departure_data["departures"]:
                     direction = inde["route"]["direction"]
+                    line = inde["route"]["designation"]
                     time = inde["realtime"]
                     transport = inde["route"]["transport_mode"]
-                    relevant_departure_data.append({"route_direction" : direction, "departure_time" : time, "transport_mode" : transport})
+                    status = inde["canceled"]
+                    relevant_departure_data.append({"route_direction" : direction, "departure_time" : time, "transport_mode" : transport, "line" : line, "Canceled" : status})
                 return relevant_departure_data # returns relevant departure data
         return None
