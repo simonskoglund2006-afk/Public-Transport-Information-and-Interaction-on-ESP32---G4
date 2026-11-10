@@ -1,9 +1,24 @@
 
 import pandas as pd
+import requests as rq
+import json
+import time
 class DataMaxer:
 
     def __init__(self):
         self.df = pd.read_csv("stops.csv",encoding="utf-8")
+
+    def search_stop_id(self, stop): # Omformaattera till json shit
+        '''Function that takes a string which it uses to search for a stop with a matching name in the stop_karlskrona.csv dataset'''
+        time.sleep(2.5)
+        result = rq.get(f"https://realtime-api.trafiklab.se/v1/stops/name/{stop}/?key=87f27410146c46db9278c92ee7b0ea28").json()   
+        try: 
+            for stopgroup in result["stop_groups"]:
+                for sto in stopgroup["stops"]:
+                    if self.is_in(sto["lat"], sto["lon"]):
+                        return stopgroup["id"]
+        except KeyError:
+            return None
 
     def filter(self):
         karlsrkrona = [] #lista att lägga filterade resultat
@@ -11,7 +26,11 @@ class DataMaxer:
         for index, stop in self.df.iterrows():  #itererar över alla stop inlaggda i dataset
             result = self.is_in(stop["stop_lat"], stop["stop_lon"]) ##kallar is in funktionens
             if result == True: 
-                karlsrkrona.append(stop)
+                id = self.search_stop_id(stop["stop_name"])
+                if id is not None:
+                    modified_stop = stop.copy()
+                    modified_stop["stop_id"] = id
+                    karlsrkrona.append(modified_stop)
 
         return pd.DataFrame(karlsrkrona, columns=list(self.df.columns)) #retunerar en ny dataframe med filtrerade resultat med samma columner som orginalet
 
@@ -28,6 +47,7 @@ class DataMaxer:
 def main():
     dtamax = DataMaxer()
     goon = dtamax.filter()
-    goon.to_csv("stop_karlskrona.csv", encoding="utf-8")
+    goon = goon.reset_index(drop=True)
+    goon.to_json(path_or_buf="Karlskrona.json", orient="index")
 
 main()
