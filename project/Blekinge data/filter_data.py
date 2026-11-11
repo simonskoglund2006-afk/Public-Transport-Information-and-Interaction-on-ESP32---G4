@@ -34,6 +34,14 @@ class DataMaxer:
 
         return pd.DataFrame(karlsrkrona, columns=list(self.df.columns)) #retunerar en ny dataframe med filtrerade resultat med samma columner som orginalet
 
+    def remove_irrelevant_data(self, data):
+        relevant_data = []
+        with open(data, encoding="utf-8") as f:
+            file = json.load(f)
+        for index in file.values():
+            relevant_data.append([index["stop_id"], index["stop_name"]])
+        return pd.DataFrame(relevant_data, columns=["stop_id", "stop_name"])
+
     def is_in(self, lat, lon):
         set_a = (lon<16.09)&(lat>56)&(lat<56.528)&(lat<(0.742804*lon + 44.67389))
         set_b = (lat < (-0.850135*lon+69.33733))&(lat<(0.547745*lon+48.02817))&(lon<16.09)&(lat<56.528)&(lat>56) 
@@ -46,8 +54,9 @@ class DataMaxer:
 
 def main():
     dtamax = DataMaxer()
-    goon = dtamax.filter()
-    goon = goon.reset_index(drop=True)
-    goon.to_json(path_or_buf="Karlskrona.json", orient="index")
+    goon1 = dtamax.remove_irrelevant_data("Karlskrona.json")
+    #goon = dtamax.filter()
+    #goon = goon.reset_index(drop=True)
+    goon1.to_json(path_or_buf="karlskrona.json", orient="index")
 
 main()
