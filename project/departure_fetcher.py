@@ -3,10 +3,12 @@ class Departure_fetcher:
     def __init__(self):
         with open("Karlskrona.json", encoding="utf-8") as f:
             self.data = self.jsn.load(f)
+        with open("secrets.txt", "r") as k:
+            self.key = k
 
     def load_data(self, id):
         '''This function takes an id that it uses to fetch stop data from the trafiklabb stop lookup api'''
-        dp = self.jsn.loads(self.requests.get(f'https://realtime-api.trafiklab.se/v1/departures/{id}?key=87f27410146c46db9278c92ee7b0ea28').text)
+        dp = self.jsn.loads(self.requests.get(f'https://realtime-api.trafiklab.se/v1/departures/{id}?key={self.key}').text)
         return dp
     
     def print_data(self, texte): 
