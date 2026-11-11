@@ -11,7 +11,7 @@ class DataMaxer:
     def search_stop_id(self, stop): # Omformaattera till json shit
         '''Function that takes a string which it uses to search for a stop with a matching name in the stop_karlskrona.csv dataset'''
         time.sleep(2.5)
-        result = rq.get(f"https://realtime-api.trafiklab.se/v1/stops/name/{stop}/?key=87f27410146c46db9278c92ee7b0ea28").json()   
+        #result = rq.get(f"https://realtime-api.trafiklab.se/v1/stops/name/{stop}/?key=").json()   
         try: 
             for stopgroup in result["stop_groups"]:
                 for sto in stopgroup["stops"]:
