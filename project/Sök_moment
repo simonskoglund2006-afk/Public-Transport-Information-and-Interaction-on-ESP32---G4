@@ -1,0 +1,84 @@
+import time
+    #Sök moment till ESP32
+
+Keybord = { #Tangentbord kopplas till input av respektive knapp beroende på antal tryck
+    "1": "abc",
+    "2": "def",
+    "3": "ghi",
+    "4": "jkl",
+    "5": "mno",
+    "6": "pqr",
+    "7": "stu",
+    "8": "vwx",
+    "9": "yzåäö",
+    "0": " ", #Mellanslag
+}
+
+# Fixar knapparnas position och storlek på skärmen (X, Y, Bredd, Höjd)
+KNAPPAR = [
+    {"id": "1", "x": 10,  "y": 100, "w": 60, "h": 40},
+    {"id": "2", "x": 80,  "y": 100, "w": 60, "h": 40},
+    {"id": "3", "x": 150, "y": 100, "w": 60, "h": 40},
+    {"id": "4", "x": 10,  "y": 150, "w": 60, "h": 40},
+    {"id": "5", "x": 80,  "y": 150, "w": 60, "h": 40},
+    {"id": "6", "x": 150, "y": 150, "w": 60, "h": 40},
+    {"id": "7", "x": 10,  "y": 200, "w": 60, "h": 40},
+    {"id": "8", "x": 80,  "y": 200, "w": 60, "h": 40},
+    {"id": "9", "x": 150, "y": 200, "w": 60, "h": 40},
+    {"id": "DEL",   "x": 80,  "y": 250, "w": 60, "h": 40},
+    {"id": "0", "x": 10,  "y": 250, "w": 60, "h": 40}, # Sudda
+    {"id": "Sök",  "x": 150, "y": 250, "w": 60, "h": 40}  # Sök/Välj
+]
+
+aktuel_text = "" #Teksten som redan har tryckt av användaren
+Aktuel_knapp = None #Knapen som trycks på nu
+Antal_tryck = 0 #Hur många gånger aktuel kanpp har tryckts
+Tid_från_senaste_tryck = 0 #Hur länge sedan, i mili secunder sedan det senaste trycket
+timeout_MS = 800 # 0.8 sec(800 mili sec) innan aktuela bokstaven låser fast
+
+#Funktioner
+def Hämta_aktuel_teken(): #Vissar och retunerar den bokstäven vi är på i nu läget
+    if Aktuel_knapp is None:
+        return ""
+    bokstäver = Keybord[Aktuel_knapp]
+    index = Antal_tryck % len(bokstäver) #Modulen % används för att få fram rätt bokstav vid antal tryk
+    return bokstäver[index]
+
+def las_fast_tecken(): #Låsser fast den bokstäven som vi är insatt på
+    global aktuel_text, Aktuel_knapp, Antal_tryck
+    if Aktuel_knapp is not None:
+        aktuel_text += Hämta_aktuel_teken()
+        Aktuel_knapp = None
+        Antal_tryck = 0
+
+def kolla_villke_knapp(touch_x, touch_y): #håller koll på villken knapp som trycks ner
+    for knapp in KNAPPAR:
+        inom_x = knapp["x"] <= touch_x <= (knapp["x"] + knapp["w"])
+        inom_y = knapp["y"] <= touch_y <= (knapp["y"] + knapp["h"])
+
+        if inom_x and inom_y:
+            return knapp["id"]
+        return None #Om man tryker på skärmen men inte någon kanpp           
+
+def hantera_knapptryck(knapp_id): #sätter fast vad som ska hämtas beroende på villken knapp som tryckts
+    global aktuel_text, Aktuel_knapp, Antal_tryck, Tid_från_senaste_tryck
+
+    if knapp_id == "DEL":
+        if Aktuel_knapp is not None:
+            Aktuel_knapp = None #avslutar med aktiv bokstav
+        else:
+            aktuel_text = aktuel_text[:-1] #tarbort senaste bokstaven
+
+    elif knapp_id == "SÖK": #anropning av station
+        las_fast_tecken()
+        print("söker station:", aktuel_text)
+
+    elif knapp_id in Keybord: 
+        if Aktuel_knapp == knapp_id: #samma knapp flera gånger, gå över till nästa bokstav
+            Antal_tryck += 1
+        else:
+            las_fast_tecken() #ny knapp, lås gamla bokstaven och börja nya.
+            Aktuel_knapp = knapp_id
+            Antal_tryck = 0
+
+    Tid_från_senaste_tryck = time.ticks_ms()
