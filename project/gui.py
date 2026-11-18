@@ -1,5 +1,6 @@
 import lvgl as lv
 <<<<<<< HEAD
+<<<<<<< HEAD
 import settings
 
 class GUI:
@@ -16,17 +17,27 @@ class GUI:
         
 =======
 
+=======
+import settings
+>>>>>>> 88a04e0 (Added settings screen (it is still in progress), added a save button and now you can select some stops as a demo, also created a new file)
 
 class GUI:
     'Builds and handles all screens on the display'
-
-    def __init__(self, departures):
+    def __init__(self, departures, stops, transport_types):
+        self.row_cells = []
+        self.stop_buttons = []
         self.departures = departures
-        self.tile2_dark = False
+        self.stops = stops
+        self.selected_stop, self.selected_type = settings.load_settings(len(stops), len(transport_types))
         self.first_screen()
         self.second_screen()
+<<<<<<< HEAD
 
 >>>>>>> 0f40474 (created a new file and added my code there instead of main)
+=======
+        self.third_screen()
+        
+>>>>>>> 88a04e0 (Added settings screen (it is still in progress), added a save button and now you can select some stops as a demo, also created a new file)
     @staticmethod
     def apply_tile_colors(tile, label, dark):
         tile.set_style_bg_opa(lv.OPA.COVER, 0)
@@ -42,6 +53,9 @@ class GUI:
         self.apply_tile_colors(self.tile2, self.board_title, self.tile2_dark)
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 88a04e0 (Added settings screen (it is still in progress), added a save button and now you can select some stops as a demo, also created a new file)
     @staticmethod
     def make_label(parent, text, y_offset):
         'Creates a centered black text label'
@@ -50,6 +64,7 @@ class GUI:
         label.set_style_text_font(lv.font_montserrat_28, 0)
         label.set_style_text_color(lv.color_hex(0x000000), 0)
         label.align(lv.ALIGN.TOP_MID, 0, y_offset)
+<<<<<<< HEAD
 
         return label
 =======
@@ -92,6 +107,10 @@ class GUI:
         self.tile1.set_style_bg_color(lv.color_hex(0xFFFFFF), 0)
         self.tile1.set_style_bg_opa(lv.OPA.COVER, 0)
 >>>>>>> 0f40474 (created a new file and added my code there instead of main)
+=======
+
+        return label
+>>>>>>> 88a04e0 (Added settings screen (it is still in progress), added a save button and now you can select some stops as a demo, also created a new file)
 
     @staticmethod
     def make_divider(parent, y_offset, width=560):
@@ -114,6 +133,9 @@ class GUI:
         cell.set_style_text_color(lv.color_hex(color), 0)
         cell.align(lv.ALIGN.TOP_LEFT, x, y)
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 88a04e0 (Added settings screen (it is still in progress), added a save button and now you can select some stops as a demo, also created a new file)
         self.row_cells.append(cell)
 
     def add_setting_icon(self):
@@ -215,8 +237,11 @@ class GUI:
 
         self.tile1.set_style_bg_color(lv.color_hex(0xFFFFFF), 0)
         self.tile1.set_style_bg_opa(lv.OPA.COVER, 0)
+<<<<<<< HEAD
 =======
 >>>>>>> 0f40474 (created a new file and added my code there instead of main)
+=======
+>>>>>>> 88a04e0 (Added settings screen (it is still in progress), added a save button and now you can select some stops as a demo, also created a new file)
 
     def second_screen(self):
         'Departure screen'
@@ -246,6 +271,7 @@ class GUI:
 
         self.make_divider(self.tile2, 395)
         self.add_cell('Data from Trafiklab.se', 20, 406)
+<<<<<<< HEAD
 <<<<<<< HEAD
         self.add_setting_icon()
 
@@ -281,3 +307,14 @@ class GUI:
         'Slides to the settings screen'
         self.tileview.set_tile(self.tile3, True)
 >>>>>>> 0f40474 (created a new file and added my code there instead of main)
+=======
+        self.add_setting_icon()
+
+    def third_screen(self):
+        'Settings screen'
+        self.tile3.set_style_bg_color(lv.color_hex(0xFFFFFF), 0)
+        self.tile3.set_style_bg_opa(lv.OPA.COVER, 0)
+        self.selecting_stops()
+        self.save_button()
+    
+>>>>>>> 88a04e0 (Added settings screen (it is still in progress), added a save button and now you can select some stops as a demo, also created a new file)
