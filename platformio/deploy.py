@@ -21,7 +21,7 @@ BUILD = ROOT / "device-build"
 VFS_ROOT = BUILD / "vfs-root"
 VFS_IMAGE = BUILD / "t4s3-vfs.img"
 VFS_DEPLOY_IMAGE = BUILD / "t4s3-vfs-deploy.img"
-VFS_DEPLOY_SIZE = 0x20000
+VFS_DEPLOY_SIZE = 0x80000  # 512 KB, room for Karlskrona.json
 FIRMWARE = ROOT / "firmware" / "t4s3-lvgl-micropython.bin"
 
 PIO_PACKAGES = Path(env.subst("$PROJECT_PACKAGES_DIR"))
