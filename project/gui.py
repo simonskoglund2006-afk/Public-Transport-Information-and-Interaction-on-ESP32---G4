@@ -1,5 +1,6 @@
 import lvgl as lv
 import settings
+import network
 
 MAX_RESULTS = 4      #temporarily
 
@@ -13,27 +14,42 @@ class GUI:
         self.transport_types = transport_types
         self.stops = stops
         self.selected_stop, self.selected_type = settings.load_settings(len(stops), len(transport_types))
+        self.fetch = None
+        self.live_status = 'Demo data'
+        self.dark = False
+        self.refresh_timer = lv.timer_create(self.on_timer, 60000, None)
+        self.themed_labels = []
+        self.themed_lines = []
         self.first_screen()
         self.second_screen()
         self.third_screen()
         
-    @staticmethod
-    def make_label(parent, text, y_offset):
-        'Creates a centered black text label'
+    def text_colour(self):
+        'White text in dark mode, black text in light mode'
+        return 0xFFFFFF if self.dark else 0x000000
+
+    def themed(self, label):
+        'Gives a label the current text colour and remembers it for the dark mode button'
+        label.set_style_text_color(lv.color_hex(self.text_colour()), 0)
+        self.themed_labels.append(label)
+        return label
+
+    def make_label(self, parent, text, y_offset):
+        'Creates a centered text label'
         label = lv.label(parent)
         label.set_text(text)
         label.set_style_text_font(lv.font_montserrat_28, 0)
-        label.set_style_text_color(lv.color_hex(0x000000), 0)
+        self.themed(label)
         label.align(lv.ALIGN.TOP_MID, 0, y_offset)
 
         return label
 
-    @staticmethod
-    def make_divider(parent, y_offset, width=560):
+    def make_divider(self, parent, y_offset, width=560):
         'Draws a thin horizontal line'
         line = lv.obj(parent)
         line.set_size(width, 2)
-        line.set_style_bg_color(lv.color_hex(0x000000), 0)
+        line.set_style_bg_color(lv.color_hex(self.text_colour()), 0)
+        self.themed_lines.append(line)
         line.set_style_bg_opa(lv.OPA.COVER, 0)
         line.set_style_border_width(0, 0)
         line.set_style_radius(0, 0)
@@ -41,12 +57,17 @@ class GUI:
 
         return line
 
-    def add_cell(self, text, x, y, color=0x000000, track=False):
-        'Adds one text cell to the departure screen'
+    def add_cell(self, text, x, y, color=None, track=False):
+        'Adds one text cell to the departure screen (color=None follows dark/light mode)'
         cell = lv.label(self.tile2)
         cell.set_text(text)
         cell.set_style_text_font(lv.font_montserrat_28, 0)
-        cell.set_style_text_color(lv.color_hex(color), 0)
+        if color is None:
+            cell.set_style_text_color(lv.color_hex(self.text_colour()), 0)
+            if not track:
+                self.themed_labels.append(cell)
+        else:
+            cell.set_style_text_color(lv.color_hex(color), 0)
         cell.align(lv.ALIGN.TOP_LEFT, x, y)
         if track:
             self.row_cells.append(cell)
@@ -73,7 +94,7 @@ class GUI:
         heading = lv.label(self.tile3)
         heading.set_text('Transport type')
         heading.set_style_text_font(lv.font_montserrat_28, 0)
-        heading.set_style_text_color(lv.color_hex(0x000000), 0)
+        self.themed(heading)
         heading.align(lv.ALIGN.TOP_LEFT, 390, 72)
 
         self.type_dropdown = lv.dropdown(self.tile3)
@@ -103,7 +124,7 @@ class GUI:
         self.status_label = lv.label(self.tile3)
         self.status_label.set_text('')
         self.status_label.set_style_text_font(lv.font_montserrat_28, 0)
-        self.status_label.set_style_text_color(lv.color_hex(0x000000), 0)
+        self.themed(self.status_label)
         self.status_label.align(lv.ALIGN.TOP_LEFT, 390, 390)
 
     def saving_settings(self, _event):
@@ -139,6 +160,32 @@ class GUI:
         'Runs the restore when teh button is tapped'
         self.reset_settings()
 
+    def build_dark_mode_button(self):
+        'Adds a button on the settings screen that switches between dark and light mode'
+        button = lv.button(self.tile3)
+        button.set_size(190, 50)
+        button.align(lv.ALIGN.TOP_LEFT, 390, 210)
+        button.add_event_cb(self.on_dark_mode_clicked, lv.EVENT.CLICKED, None)
+        self.dark_mode_label = lv.label(button)
+        self.dark_mode_label.set_text('Dark mode')
+        self.dark_mode_label.center()
+
+    def on_dark_mode_clicked(self, _event):
+        'Flips between black background/white text and white background/black text'
+        self.dark = not self.dark
+        background = lv.color_hex(0x000000 if self.dark else 0xFFFFFF)
+        text = lv.color_hex(self.text_colour())
+
+        for screen in (self.tileview, self.tile1, self.tile2, self.tile3):
+            screen.set_style_bg_color(background, 0)
+        for label in self.themed_labels:
+            label.set_style_text_color(text, 0)
+        for line in self.themed_lines:
+            line.set_style_bg_color(text, 0)
+
+        self.dark_mode_label.set_text('Light mode' if self.dark else 'Dark mode')
+        self.draw_rows()
+
     def on_settings_clicked(self, _event):
         'Slides to the settings screen'
         self.tileview.set_tile(self.tile3, True)
@@ -160,7 +207,7 @@ class GUI:
             self.add_cell('No departures', 20, 118, track=True)
         for row, (dep_time, line, dest, status, _kind) in enumerate(rows[:5]):
             y = 118 + row * 52
-            color = 0x000000 if status == 'On time' else 0xCC0000
+            color = None if status == 'On time' else 0xCC0000
             self.add_cell(dep_time, 20, y, track=True)
             self.add_cell(line, 130, y, track=True)
             self.add_cell(dest, 250, y, track=True)
@@ -236,6 +283,68 @@ class GUI:
     def on_keyboard_done(self, _event):
         'Hides the keyboard when the user taps the tick or close key'
         self.keyboard.add_flag(lv.obj.FLAG.HIDDEN)
+
+    def build_refresh(self):
+        'Adds the refresh button and a status line on departure screen'
+        self.board_status = lv.label(self.tile2)
+        self.board_status.set_text('')
+        self.board_status.set_style_text_font(lv.font_montserrat_28, 0)
+        self.board_status.set_style_text_color(lv.color_hex(0xCC0000), 0)
+        self.board_status.align(lv.ALIGN.TOP_LEFT, 20, 358)
+
+        button = lv.button(self.tile2)
+        button.set_size(150, 44)
+        button.align(lv.ALIGN.BOTTOM_RIGHT, -10, -6)
+        button.add_event_cb(self.on_refresh_clicked, lv.EVENT.CLICKED, None)
+        label = lv.label(button)
+        label.set_text('Refresh')
+        label.center()
+
+    def on_refresh_clicked(self, _event):
+        'Runs a manual refresh when the button is pressed (please dont spam the button)'
+        self.refresh_departures()
+
+    def refresh_departures(self):
+        'Fetches fresh departures for the selected stop and redraws the board'
+        name = self.stops[self.selected_stop]
+        if self.fetch is None:
+            self.live_status = 'Demo data'
+            self.board_status.set_text('')
+        else:
+            self.board_status.set_text('Loading')
+            lv.refr_now(None)
+            rows = self.fetch(name)
+            if rows is None:
+                self.live_status = 'Failure'
+                self.board_status.set_text('Update failed')
+            else:
+                self.departures_2[name] = rows
+                self.live_status = 'Looking good'
+                self.board_status.set_text('')
+        self.draw_rows()
+        self.update_status()
+
+    def build_status(self):
+        'Adds the Wi-Fi live data status text on departure screen'
+        self.wifi_label = lv.label(self.tile3)
+        self.wifi_label.set_style_text_font(lv.font_montserrat_28, 0)
+        self.themed(self.wifi_label)
+        self.wifi_label.align(lv.ALIGN.TOP_LEFT, 20, 350)
+
+        self.live_label = lv.label(self.tile3)
+        self.live_label.set_style_text_font(lv.font_montserrat_28, 0)
+        self.themed(self.live_label)
+        self.live_label.align(lv.ALIGN.TOP_LEFT, 20, 385)
+
+    def update_status(self):
+        'Refreshes the Wi-Fi and live data text'
+        connected = network.WLAN(network.STA_IF).isconnected()
+        self.wifi_label.set_text('Wi-Fi ' + ('connected :D' if connected else 'not connected D:'))
+        self.live_label.set_text('Live data ' + self.live_status)
+
+    def on_timer(self, _timer):
+        'Refreshes the departures automatically every 60 seconds'
+        self.refresh_departures()
     
     def first_screen(self):
         'Introduction screen'
@@ -250,7 +359,7 @@ class GUI:
         self.tile3 = self.tileview.add_tile(2, 0, lv.DIR.LEFT)
 
         self.title_label = self.make_label(self.tile1, "Public Transport Information", 20)
-        self.version_label = self.make_label(self.tile1, "V2", 70)
+        self.version_label = self.make_label(self.tile1, "V3", 70)
         self.group_label = self.make_label(self.tile1, "Group 4", 110)
         self.names_label = self.make_label(self.tile1, "Albin Persson\nDaniel Ojog\nFelix Rudiger\nLucas Jonsson\nSimon Skoglund", 150)         #Unfortunally I can not find a way to write åäö :(
 
@@ -265,7 +374,7 @@ class GUI:
         self.board_title = lv.label(self.tile2)
         self.board_title.set_text('Departures')
         self.board_title.set_style_text_font(lv.font_montserrat_28, 0)
-        self.board_title.set_style_text_color(lv.color_hex(0x000000), 0)
+        self.themed(self.board_title)
         self.board_title.align(lv.ALIGN.TOP_MID, 0 , 15)
         self.make_divider(self.tile2, 60)
 
@@ -280,6 +389,7 @@ class GUI:
         self.make_divider(self.tile2, 395)
         self.add_cell('Data from Trafiklab.se', 20, 406)
         self.add_setting_icon()
+        self.build_refresh()
 
     def third_screen(self):
         'Settings screen'
@@ -287,5 +397,8 @@ class GUI:
         self.tile3.set_style_bg_opa(lv.OPA.COVER, 0)
         self.build_search()
         self.drop_down()
+        self.build_dark_mode_button()
         self.build_restore_button()
         self.save_button()
+        self.build_status()
+        self.update_status()
