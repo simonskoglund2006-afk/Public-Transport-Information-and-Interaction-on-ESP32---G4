@@ -1,11 +1,8 @@
 import sys
 import time
-
-import lvgl as lv
 import network
 from board_lvgl import start_board
 from debug_log import log
-
 from gui import GUI
 from secrets import WIFI_SSID, WIFI_PASSWORD
 
@@ -58,6 +55,7 @@ class Application:
         self.display, self.touch, self.handler = start_board()
         self.gui = GUI(DEPARTURES, STOPS, TRANSPORT_TYPES, DEPARTURES_2)
         self.connect_wifi()
+        self.gui.update_status()
         log("student application ready")
 
     @staticmethod
